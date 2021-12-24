@@ -15,11 +15,6 @@ namespace Kbg.NppPluginNET
             InitializeComponent();
             ActiveControl = null;
         }
-        
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
 
         private void frmMyDlg_Load(object sender, EventArgs e)
         {
@@ -50,8 +45,8 @@ namespace Kbg.NppPluginNET
         }
         private void GoToXClick(object sender, EventArgs e)
         {
-            Main.HideDialog();
             Main.isFuncEnabled = false;
+            Main.HideDialog();
         }
 
         
@@ -81,6 +76,10 @@ namespace Kbg.NppPluginNET
                 return true;
             }
             return false;
+        }
+        public bool CheckStayCheckBox()
+        {
+            return StayCheckBox.Checked;
         }
 
         public void ShowGoUpDownButtons()

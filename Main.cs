@@ -17,7 +17,7 @@ namespace Kbg.NppPluginNET
     {
         internal const string PluginName = "JSFunctionViewer";
         static string iniFilePath = null;
-        static bool someSetting = false;
+        //static bool someSetting = false;
         static frmMyDlg frmFuncView = null;
         static int idFuncView = -1;
         public static bool isFuncEnabled = false;
@@ -26,9 +26,9 @@ namespace Kbg.NppPluginNET
         static Icon tbIcon = null;
         static bool isShuttingDown = false;
         static string externalFilePath = "";
+        static bool isShown = false;
 
         
-
         public static void OnNotification(ScNotification notification)
         {
             if (notification.Header.Code == (uint)NppMsg.NPPN_BEFORESHUTDOWN || notification.Header.Code == (uint)NppMsg.NPPN_SHUTDOWN)
@@ -49,9 +49,9 @@ namespace Kbg.NppPluginNET
             iniFilePath = sbIniFilePath.ToString();
             if (!Directory.Exists(iniFilePath)) Directory.CreateDirectory(iniFilePath);
             iniFilePath = Path.Combine(iniFilePath, PluginName + ".ini");
-            someSetting = (Win32.GetPrivateProfileInt("SomeSection", "SomeKey", 0, iniFilePath) != 0);
+            //someSetting = (Win32.GetPrivateProfileInt("SomeSection", "SomeKey", 0, iniFilePath) != 0);
 
-            PluginBase.SetCommand(0, "Toggle Function Viewer", FunctionViewer, new ShortcutKey(false, true, false, Keys.B));
+            PluginBase.SetCommand(0, "Toggle Function Viewer", FunctionViewer/*, new ShortcutKey(false, true, false, Keys.B)*/);
 
             idFuncView = 0;
         }
@@ -75,13 +75,13 @@ namespace Kbg.NppPluginNET
             tbIcons.hToolbarBmp = tbBmp.GetHbitmap();
             IntPtr pTbIcons = Marshal.AllocHGlobal(Marshal.SizeOf(tbIcons));
             Marshal.StructureToPtr(tbIcons, pTbIcons, false);
-            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_ADDTOOLBARICON, PluginBase._funcItems.Items[idFuncView]._cmdID, pTbIcons);
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_ADDTOOLBARICON, PluginBase._funcItems.Items[idFuncView]._cmdID, pTbIcons); //todo: dark mode
             Marshal.FreeHGlobal(pTbIcons);
         }
 
         internal static void PluginCleanUp()
         {
-            Win32.WritePrivateProfileString("SomeSection", "SomeKey", someSetting ? "1" : "0", iniFilePath);
+            //Win32.WritePrivateProfileString("SomeSection", "SomeKey", someSetting ? "1" : "0", iniFilePath);
         }
 
 
@@ -133,11 +133,20 @@ namespace Kbg.NppPluginNET
         
         public static void ShowDialog()
         {
-            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_DMMSHOW, 0, frmFuncView.Handle);
+            if (!isShown)
+            {
+                isShown = true;
+                Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_DMMSHOW, 0, frmFuncView.Handle);
+            }
         }
         public static void HideDialog()
         {
-            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_DMMHIDE, 0, frmFuncView.Handle);
+            if (!frmFuncView.CheckStayCheckBox() || !isFuncEnabled) 
+            {
+                isShown = false;
+
+                Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_DMMHIDE, 0, frmFuncView.Handle);
+            }
         }
 
 
@@ -302,9 +311,11 @@ namespace Kbg.NppPluginNET
             }
         }
 
-
         internal static void CheckGoToButtons()
         {
+            isShown = false;
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_DMMHIDE, 0, frmFuncView.Handle);
+
             if (frmFuncView.CheckGoToFunction())
             {
                 string selectedText = GetSelectedText();
@@ -318,19 +329,19 @@ namespace Kbg.NppPluginNET
                     Process.Start("notepad++.exe", "\"" + externalFilePath + "\"");
                 }
 
-                HideDialog();
+                //HideDialog();
                 
                 SendKeys.SendWait("%(S{ENTER})^(V){ENTER}{ESCAPE}");
             }
             else if (frmFuncView.CheckGoUp())
             {
-                HideDialog();
+                //HideDialog();
                 
                 SendKeys.SendWait("%(SSS{ENTER})");
             }
             else if (frmFuncView.CheckGoDown())
             {
-                HideDialog();
+                //HideDialog();
                 
                 SendKeys.SendWait("%(SS{ENTER})");
             }
@@ -379,7 +390,7 @@ namespace Kbg.NppPluginNET
                             {
                                 frmFuncView.HideGoUpDownButtons();
                                 externalFilePath = filePaths[i];
-                                functionText = Environment.NewLine + "                                           From: " + filePaths[i] + Environment.NewLine + Environment.NewLine + functionText;
+                                functionText = Environment.NewLine + "                                                        (From: " + filePaths[i] + ")" + Environment.NewLine + Environment.NewLine + functionText;
                             }
                             else
                             {

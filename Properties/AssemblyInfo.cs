@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("JSFunctionViewer")]
-[assembly: AssemblyDescription("Provides and easier way to view and/or navigate to functions from function calls. Also works with external files if the src attribute is the last attribute of the script tag.")]
+[assembly: AssemblyDescription("Provides an easier way to view and/or navigate to functions from function calls. Also works with external files if the src attribute is the last attribute of the script tag. Recommended: In the Find/Replace window (Ctrl+F), tick the 'Match case' and untick the 'Match whole word only' check box.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("davidsover")]
 [assembly: AssemblyProduct("JSFunctionViewer")]
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.*")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.1.0.*")]
+[assembly: AssemblyFileVersion("1.1.0.0")]
