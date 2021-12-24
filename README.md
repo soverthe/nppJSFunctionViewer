@@ -10,3 +10,6 @@ Provides an easier way to view and/or navigate to functions from function calls.
 - Select a function's name
 
 Demonstration video: https://youtu.be/mitKRrQFjLE
+
+### Recommended:
+  In the Find/Replace window (Ctrl+F), tick the 'Match case' and untick the 'Match whole word only' check box.
